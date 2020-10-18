@@ -75,12 +75,11 @@ def main():
         "% No Computer or Internet Estimate", "% HHs With Vulnerable Job Estimate",
         "% Single Parent Estimate"]
         column_list_svi = ["Student Vulnerability Index"] + column_list_short
-    #we don't need column select anymore
-        #column_select = st.multiselect("Variable", column_list_short)
+        column_select = st.multiselect("Variable", column_list_short)
         import plotly.graph_objects as go
         if state_select == "All":
         
-            #cols = ["State","Geographic School District"] + column_select
+            cols = ["State","Geographic School District"] + column_select
         # removed dataframe because the user doesn't need it
             #st.write(df[cols])        
             st.text(" \n")
@@ -92,9 +91,6 @@ def main():
             num_or_perc = st.selectbox("Would you like Population Numbers or Percentages?",
             ['Percentage', 'Numbers'])
             cols2 = ["State"] + column_list_short
-
-            st.text(" \n")
-            st.write('Click on the legend to select a variable. \n Click and drag on the graph to zoom in.')
             if num_or_perc == 'Percentage':            
                 df_state = 100*pd.pivot_table(df[cols2], index = 'State')
                 fig = go.Figure(data = [go.Bar(
@@ -102,10 +98,10 @@ def main():
                 y = df_state[ele],
                 name = ele,
                 ) for ele in df_state.columns])
-                fig.update_layout(barmode = 'group', width = 1200, height = 600, title=" State vs. Average Percent")
+                fig.update_layout(barmode = 'group', width = 1200, height = 600, title=" State vs. Average Percent for a Given Variable")
                 
                 fig.update_xaxes(title_text='State')
-                fig.update_yaxes(title_text='Average Percent')
+                fig.update_yaxes(title_text='Average Percent of Chosen Variable')
                 st.plotly_chart(fig)
                 
             else:
@@ -115,27 +111,23 @@ def main():
                 y = df_numbers[ele],
                 name = ele
                 ) for ele in df_numbers.columns])
-                fig_num.update_layout(barmode = 'group', width = 1200, height = 600, title=" State vs. Average Population for Demographic")
+                fig_num.update_layout(barmode = 'group', width = 1200, height = 600, title=" State vs. Average Numbers for a Given Variable")
                 fig_num.update_xaxes(title_text='State')
-                fig_num.update_yaxes(title_text='Average Population')
+                fig_num.update_yaxes(title_text='Average Numbers of Chosen Variable')
                
                 st.plotly_chart(fig_num)
 
         else:
-
-            st.text(" \n")
-            st.write('Click on the legend to select a variable. \n Click and drag on the graph to zoom in.')
-
         
             new_df = df[(df.State == state_select)]
-            #cols = ["Geographic School District"] + column_select
-            #st.write(new_df[cols])
+            cols = ["Geographic School District"] + column_select
+            st.write(new_df[cols])
             st.text(" \n")
             st.text(" \n")
         
         #A lot of datapoints in the bar plot
             fig1 =  go.Figure(data = [go.Bar(
-            x = new_df["Geographic School District"],
+            x = new_df[cols[0]],
             y = 100*new_df[ele],
             name = ele
             ) for ele in column_list_short])
@@ -162,8 +154,8 @@ def main():
         st.text(" \n")
         st.write("## Student Vulnerability Index:")
         st.write("These are the districts with the highest needs right now. The SVI is a value scaled on the percentages across each vulnerable demographic, ranging 0 (no needs) to 1 (high needs).")
-        #column = st.selectbox("Choose Demographic", column_list_svi)
-        st.write(pd.pivot_table(df[['Geographic School District', "Student Vulnerability Index"]], index='Geographic School District').sort_values(by="Student Vulnerability Index", ascending=False))
+        column = st.selectbox("Choose Demographic", column_list_svi)
+        st.write(pd.pivot_table(df[['Geographic School District', column]], index='Geographic School District').sort_values(by=column, ascending=False))
        
 main() 
 
