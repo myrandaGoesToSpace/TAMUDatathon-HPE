@@ -222,4 +222,4 @@ def main():
     # Student Vulnerability Index
       
        
-
+main()
