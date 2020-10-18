@@ -24,7 +24,40 @@ def main():
     nav = st.sidebar.radio("Navigation",["Purpose","Visualization","Call to Action"])
     df = loadData()
     if nav == "Call to Action":
-        st.write(""" *For low-income students/homes with job instability*:   some of these students relied on school breakfast and lunch programs for food. HPE can help these students by providing meals. *For single-parent homes*: School from home means single parents have to remain at home with their kids or find a babysitter. HPE can help this demographic by investing in child care or providing easier ways for single parents to transition to working from home For no internet access: These students need the internet to complete school. HPE can help set up local hotspots for students or donate technology to schools in need""" )
+        #moving svi calculations to Call to Action section
+        min_max_scaler = preprocessing.MinMaxScaler()
+        svi = min_max_scaler.fit_transform(df[['% Poverty (SAIPE Estimate)',
+        '% HHs With Vulnerable Job Estimate','% No Computer or Internet Estimate']].values).sum(axis = 1)/3
+        df['Student Vulnerability Index'] = svi
+
+        column_list_short = ["% Poverty (SAIPE Estimate)", 
+        "% No Computer or Internet Estimate", "% HHs With Vulnerable Job Estimate",
+        "% Single Parent Estimate"]
+        column_list_svi = ["Student Vulnerability Index"] + column_list_short
+        st.write("# What HPE Can Do ")
+        
+        #st.write(""" *For low-income students/homes with job instability*:   some of these students relied on school breakfast and lunch programs for food. HPE can help these students by providing meals. *For single-parent homes*: School from home means single parents have to remain at home with their kids or find a babysitter. HPE can help this demographic by investing in child care or providing easier ways for single parents to transition to working from home For no internet access: These students need the internet to complete school. HPE can help set up local hotspots for students or donate technology to schools in need""" )
+        st.write("## Student Vulnerability Index:")
+        st.write("These are the districts with the highest needs right now. The SVI is a value scaled on the percentages across each vulnerable demographic, ranging from 0 (no needs) to 1 (high needs).")
+        #column = st.selectbox("Choose Demographic", column_list_svi)
+        st.write(pd.pivot_table(df[['Geographic School District', "Student Vulnerability Index"]], index='Geographic School District').sort_values(by="Student Vulnerability Index", ascending=False))
+        st.text(" \n")
+        st.text(" \n")
+        st.text(" \n")
+        st.text(" \n")
+        st.text(" \n")
+        st.text(" \n")
+        st.write("## Interventions")
+        st.write(
+            "Below are the suggested actions HPE can take to assist community members in target areas:")
+        
+        st.write(
+            "* __Poverty__: facilitate meals for low-income families, or encourage business partners to donate to local food pantries"
+            )
+        st.write("* __No Internet Access__: provide schools with technology to support students while at home")
+        st.write("* __Job Instability__: donate to funds for parents of K-12 students")
+        st.write("* __Single-Parent Families__: encourage business partners to provide child care or transition parents to remote work")
+        st.write("### HPE believes in investing in the community. Let's commit to our students and beat this pandemic together")
     if nav == "Purpose":
         st.title("COVID-19 Impact on K-12 Students")
         st.write("All around the world, K-12 students are adapting to the changes put in place by COVID-19. Schools are now conducted online, meaning that students are increasingly reliant on the resources available at home. Students at a significant disadvantage include those from low-income housholds, without access to home internet, with parents suffering from job instability, and in single-parent homes. HPE is committed to making a positive impact on the community and knows firsthand the advantage technology can provide. This data visualization tool uses a dataset from the Urban Institute to compare the percentages of students in each state living in poverty, without internet access, in homes with job instability, and living with a single parent. Each of these targeted communities needs extra support during the pandemic, and HPE has the resources to make a difference.")
