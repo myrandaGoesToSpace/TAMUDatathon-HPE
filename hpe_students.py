@@ -222,10 +222,4 @@ def main():
     # Student Vulnerability Index
       
        
-main() 
 
-
-<<<<<<< HEAD
-main()
-=======
->>>>>>> parent of 968900f... Merge pull request #2 from pandey-tushar/main
