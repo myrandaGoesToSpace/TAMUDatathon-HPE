@@ -72,7 +72,7 @@ def main():
         st.write("* __Single-Parent Families__: encourage business partners to provide child care or transition parents to remote work")
         st.write("### HPE believes in investing in the community. Let's commit to our students and beat this pandemic together")
 
-        st.write("Urban Institute. 2020. Household Conditions by Geographic School District. Accessible from https://datacatalog.urban.org/dataset/household-conditions-geographic-sc.... Data originally sourced from NHGIS, developed at the Urban Institute, and made available under the ODC-BY 1.0 Attribution License.")
+        st.write("<small>Urban Institute. 2020. Household Conditions by Geographic School District. Accessible from https://datacatalog.urban.org/dataset/household-conditions-geographic-sc.... Data originally sourced from NHGIS, developed at the Urban Institute, and made available under the ODC-BY 1.0 Attribution License.</small>", unsafe_allow_html=True)
 #2 from pandey-tushar/main
     if nav == "Purpose":
         img = Image.open("covid_students_teacher.jpg")
