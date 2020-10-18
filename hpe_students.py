@@ -53,7 +53,7 @@ def main():
         st.write("These are the districts with the highest degree of vulnerability right now. The SVI is a value scaled on the percentages across each vulnerable demographic, ranging from 0 (no needs) to 1 (high needs).")
 #2 from pandey-tushar/main
         #column = st.selectbox("Choose Demographic", column_list_svi)
-        st.write(pd.pivot_table(df[['Geographic School District', "Student Vulnerability Index"]], index='Geographic School District').sort_values(by="Student Vulnerability Index", ascending=False))
+        st.write(pd.pivot_table(df[['Geographic School District', "State", "Student Vulnerability Index"]], index=['Geographic School District', 'State']).sort_values(by=["Student Vulnerability Index"], ascending=False))
         st.text(" \n")
         st.text(" \n")
         st.text(" \n")
