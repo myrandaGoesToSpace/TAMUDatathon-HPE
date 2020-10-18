@@ -19,8 +19,8 @@ def loadData():
     return pd.read_excel("https://urban-data-catalog.s3.amazonaws.com/drupal-root-live/2020/06/08/NHGIS_District_data.xlsx")
 
 def main():
-    
-    
+
+
     nav = st.sidebar.radio("Navigation",["Purpose","Visualization","Call to Action"])
     df = loadData()
     if nav == "Call to Action":
@@ -31,18 +31,33 @@ def main():
         st.header("Why Students Matter to HPE")
         st.write("HPE knows that K-12 students are the next generation of engineers, programmers, creators, and scholars that will impact the world. That's why it's important to invest in these future community members and ensure their success.")
         st.header("Vulnerable Demographics")
-        st.write(""" This app identifies four populations that are especially vulnerable due to COVID-19: 
-- __Students living in poverty__ typically rely on school breakfast and lunch to receive their meals. Now that the students are forced to stay home, they may not always have enough food. 
-	
-- **Students without access to internet or a computer** cannot complete assignments or attend class online. These students will fall 
-	behind in school. 
-- **Students in homes with unstable jobs** have parents or guardians with a job hindered by COVID-19. Reasons for job vulnerability
-	include inability to transition to remote work, business closures, and lay-offs. 
-- **Students in single-parent homes** now require a parent, guardian, sibling, or babysitter to stay home with them. Single parents
-	might have difficulty staying home with their child if they cannot work from home. 
+        st.write(""" This app identifies four populations that are especially vulnerable due to COVID-19:
+- __Students living in poverty__ typically rely on school breakfast and lunch to receive their meals. Now that the students are forced to stay home, they may not always have enough food.
 
-        
+- **Students without access to internet or a computer** cannot complete assignments or attend class online. These students will fall
+	behind in school.
+- **Students in homes with unstable jobs** have parents or guardians with a job hindered by COVID-19. Reasons for job vulnerability
+	include inability to transition to remote work, business closures, and lay-offs.
+- **Students in single-parent homes** now require a parent, guardian, sibling, or babysitter to stay home with them. Single parents
+	might have difficulty staying home with their child if they cannot work from home.
+
+
         """ )
+        covid_data = pd.read_csv("https://data.cdc.gov/api/views/9mfq-cb36/rows.csv?accessType=DOWNLOAD")
+        cases = covid_data[['submission_date','state','tot_cases']].dropna()
+        covid_cases = cases[cases.iloc[:,0] == '10/16/2020'].iloc[:,1:]
+        covid_cases = covid_cases.pivot_table(index = 'state').sort_values(by = 'tot_cases', ascending = False)
+        import matplotlib.pyplot as plt
+        fig, axes = plt.subplots(2,1)
+        df['No_Internet'] = df['Children 5-17 (SAIPE Estimate)']*df['% No Computer or Internet Estimate']
+        our_data = df.groupby('State')['No_Internet'].sum()
+        our_data = our_data.sort_values(ascending = False)[:10]
+        our_data.plot(kind = 'bar', ax = axes[1], figsize = (12,8))
+        covid_cases[:10].plot(kind = 'bar',ax = axes[0], figsize = (12,8))
+        axes[1].set_ylabel('Vulnerable Students')
+        axes[0].set_ylabel('Total Covid Cases')
+        st.pyplot(fig)
+
     # df['Student Vulnerability Index'] = df['% Poverty (SAIPE Estimate)'] * \
     #     df['% HHs With Vulnerable Job Estimate'] * \
     #         df['% No Computer or Internet Estimate']
@@ -71,7 +86,7 @@ def main():
 # Filter data using multiselect
 
     # The columns we're interested in for this project: poverty, access to computer/internet, vulnerable jobs, and single parent
-        column_list_short = ["% Poverty (SAIPE Estimate)", 
+        column_list_short = ["% Poverty (SAIPE Estimate)",
         "% No Computer or Internet Estimate", "% HHs With Vulnerable Job Estimate",
         "% Single Parent Estimate"]
         column_list_svi = ["Student Vulnerability Index"] + column_list_short
@@ -79,10 +94,10 @@ def main():
         #column_select = st.multiselect("Variable", column_list_short)
         import plotly.graph_objects as go
         if state_select == "All":
-        
+
             #cols = ["State","Geographic School District"] + column_select
         # removed dataframe because the user doesn't need it
-            #st.write(df[cols])        
+            #st.write(df[cols])
             st.text(" \n")
             st.text(" \n")
             st.text(" \n")
@@ -95,7 +110,7 @@ def main():
 
             st.text(" \n")
             st.write('Click on the legend to select a variable. \n Click and drag on the graph to zoom in.')
-            if num_or_perc == 'Percentage':            
+            if num_or_perc == 'Percentage':
                 df_state = 100*pd.pivot_table(df[cols2], index = 'State')
                 fig = go.Figure(data = [go.Bar(
                 x = list(df_state.index),
@@ -103,11 +118,11 @@ def main():
                 name = ele,
                 ) for ele in df_state.columns])
                 fig.update_layout(barmode = 'group', width = 1200, height = 600, title=" State vs. Average Percent")
-                
+
                 fig.update_xaxes(title_text='State')
                 fig.update_yaxes(title_text='Average Percent')
                 st.plotly_chart(fig)
-                
+
             else:
                 df_numbers = df[cols2].groupby('State')[column_list_short].sum()
                 fig_num = go.Figure(data = [go.Bar(
@@ -118,7 +133,7 @@ def main():
                 fig_num.update_layout(barmode = 'group', width = 1200, height = 600, title=" State vs. Average Population for Demographic")
                 fig_num.update_xaxes(title_text='State')
                 fig_num.update_yaxes(title_text='Average Population')
-               
+
                 st.plotly_chart(fig_num)
 
         else:
@@ -126,13 +141,13 @@ def main():
             st.text(" \n")
             st.write('Click on the legend to select a variable. \n Click and drag on the graph to zoom in.')
 
-        
+
             new_df = df[(df.State == state_select)]
             #cols = ["Geographic School District"] + column_select
             #st.write(new_df[cols])
             st.text(" \n")
             st.text(" \n")
-        
+
         #A lot of datapoints in the bar plot
             fig1 =  go.Figure(data = [go.Bar(
             x = new_df["Geographic School District"],
@@ -152,7 +167,7 @@ def main():
             fig2.update_layout(barmode = 'group', width = 1200, height = 600)
             st.plotly_chart(fig2)
 
-    
+
     # Student Vulnerability Index
         st.text(" \n")
         st.text(" \n")
@@ -164,7 +179,5 @@ def main():
         st.write("These are the districts with the highest needs right now. The SVI is a value scaled on the percentages across each vulnerable demographic, ranging 0 (no needs) to 1 (high needs).")
         #column = st.selectbox("Choose Demographic", column_list_svi)
         st.write(pd.pivot_table(df[['Geographic School District', "Student Vulnerability Index"]], index='Geographic School District').sort_values(by="Student Vulnerability Index", ascending=False))
-       
-main() 
 
-
+main()
