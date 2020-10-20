@@ -9,14 +9,14 @@ from sklearn import preprocessing
 import dash
 import dash_table
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 
 @st.cache(allow_output_mutation=True)
 def loadData():
-    return pd.read_excel("https://urban-data-catalog.s3.amazonaws.com/drupal-root-live/2020/06/08/NHGIS_District_data.xlsx")
+    return pd.read_excel("NHGIS_District_data.xlsx")
 
 def main():
     
